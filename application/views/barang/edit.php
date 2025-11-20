@@ -7,7 +7,7 @@
 <input type="text" name="nama_barang" value="<?= $barang->nama_barang; ?>" required><br><br>
 
 <label>Stok</label><br>
-<input type="number" name="jumlah" value="<?= $barang->stok; ?>" required><br><br>
+<input type="number" name="jumlah" value="<?= $barang->jumlah; ?>" required><br><br>
 
 <button type="submit">Update</button>
 </form>
