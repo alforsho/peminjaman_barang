@@ -1,42 +1,46 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
-
 class Auth extends CI_Controller {
 
-    public function index()
-    {
-        $this->load->view('login');
+    public function __construct(){
+        parent::__construct();
+        $this->load->model('User_model');
     }
 
-    public function proses()
-    {
-        $u = $this->input->post('username');
-        $p = $this->input->post('password');
+    public function index(){
+        $this->load->view('auth/login');
+    }
 
-        $this->load->model('Auth_model');
-        $user = $this->Auth_model->cek_login($u, $p);
+    public function login(){
+        $username = $this->input->post('username');
+        $password = $this->input->post('password');
 
-        if ($user) {
+        $user = $this->User_model->getByUsername($username);
+
+        // cek password tanpa hash
+        if($user && $password == $user->password){
 
             $this->session->set_userdata([
-                'id_user' => $user->id_user,
-                'nama'    => $user->nama,
-                'role'    => $user->role,
-                'login'   => true
+                'id'        => $user->id,
+                'nama'      => $user->nama,
+                'role'      => $user->role,
+                'logged_in' => TRUE
             ]);
 
-            redirect('dashboard');
+            if($user->role == 'peminjam'){
+                redirect('dashboard/peminjam');
+            } else {
+                redirect('dashboard/pengawas');
+            }
 
         } else {
-            $this->session->set_flashdata('error', 'Username atau password salah');
-            redirect('login');
+            $this->session->set_flashdata('error', 'Username atau Password salah!');
+            redirect('auth');
         }
     }
 
-    public function logout()
-    {
+    public function logout(){
         $this->session->sess_destroy();
-        redirect('login');
+        redirect('auth');
     }
-
 }
+?>
